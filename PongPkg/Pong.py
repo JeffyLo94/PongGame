@@ -32,7 +32,7 @@ H_BUMPER_HT = 10
 H_BUMPER_WH = 110
 
 BALL_SPEED = 5
-BUMPER_SPEED = 10
+BUMPER_SPEED = 5
 
 def terminate():
     pygame.quit()
@@ -143,8 +143,10 @@ def play():
         displayMsg = 'Game ' + str(count)
         while not has_match_winner:
             print(displayMsg)
-            draw_text(displayMsg, font, surface, WINDOWWIDTH / 2-50, WINDOWHEIGHT / 3)
+            draw_text(displayMsg, font, surface, WINDOWWIDTH / 2-70, WINDOWHEIGHT / 3)
             draw_text('Press a key to start.', font, surface, WINDOWWIDTH / 2 - 150, WINDOWHEIGHT / 3 + 50)
+            draw_text(str(gamestats.pLMatchScore) + "  -  " + str(gamestats.pRMatchScore), font, surface,
+                      WINDOWWIDTH/2 - 50, WINDOWHEIGHT/3 + 100)
             pygame.display.update()
             wait_player_start_game()
 
@@ -276,6 +278,11 @@ def play():
                 print('game stats: ' + str(gamestats.has_game_winner()))
                 if gamestats.has_game_winner()[0]:
                     print('ending game')
+                    winner = gamestats.has_game_winner()[1]
+                    if winner == 'leftWin':
+                        gamestats.increment_match_score('PL')
+                    else:
+                        gamestats.increment_match_score('PR')
                     play_game = False
                     gamestats.reset_game()
 
