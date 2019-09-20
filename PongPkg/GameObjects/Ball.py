@@ -36,3 +36,13 @@ class Ball:
 
     def reset(self):
         self.initialize()
+
+    def reverse_vel_y(self):
+        newvel = (self.vel[0], -self.vel[1])
+        print('setting velocity: ' + str(newvel))
+        self.set_vel(newvel)
+
+    def reverse_vel_x(self):
+        newvel = (-self.vel[0], self.vel[1])
+        print('setting velocity: ' + str(newvel))
+        self.set_vel(newvel)

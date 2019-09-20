@@ -74,6 +74,13 @@ def ball_hit_objs( targets, ball ):
             return True
     return False
 
+def find_ball_hits( targets, ball ):
+    targetlist = []
+    for t in targets:
+        targetlist.append(t.rect)
+
+    return ball.rect.collidelistall(targetlist)
+
 def ball_exit_left( ball ):
     position = ball.get_pos()
     print(str(position))
@@ -211,7 +218,7 @@ def play():
                 if move_up  and rs_bumper_side.rect.top > 0:
                     rs_bumper_side.rect.move_ip(0, -1 * BUMPER_SPEED)
                 if move_down and rs_bumper_side.rect.bottom < WINDOWHEIGHT :
-                    rs_bumper_side.rect.move_ip(1 * BUMPER_SPEED, 0)
+                    rs_bumper_side.rect.move_ip(0, 1 * BUMPER_SPEED)
 
                 # COM movement
                 ball_pos = ball.get_pos()
@@ -227,6 +234,20 @@ def play():
                     ls_bumper_side.rect.move_ip(0, 1 * BUMPER_SPEED)
 
                 # collisions
+                hitInd = find_ball_hits( bumpers, ball )
+                if len(hitInd) > 0:
+                    print('collision detected, ' + str(hitInd))
+                    for i in hitInd:
+                        if i == 0 or i == 1 or i == 3 or i == 4:
+                            print('top/bot bumper collision')
+                            ball.reverse_vel_y()
+                        elif i == 2 or i == 5:
+                            print('l/r bumper collision')
+                            ball.reverse_vel_x()
+                        if (i < len(bumpers)/2):
+                            ls_bump_sound.play()
+                        else:
+                            rs_bump_sound.play()
 
 
                 # Bumpers
@@ -236,10 +257,7 @@ def play():
                 surface.blit(rs_bumper_top.surface, rs_bumper_top.rect)
                 surface.blit(rs_bumper_bot.surface, rs_bumper_bot.rect)
                 surface.blit(rs_bumper_side.surface, rs_bumper_side.rect)
-
-                # check for ball position
-                if ball_hit_objs( bumpers, ball):
-                    print( 'bounce detected' )
+                    
 
                 if ball_exit_left(ball):
                     print('rs gain point')
