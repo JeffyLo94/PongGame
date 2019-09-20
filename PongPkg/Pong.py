@@ -32,6 +32,7 @@ H_BUMPER_HT = 10
 H_BUMPER_WH = 110
 
 BALL_SPEED = 5
+BUMPER_SPEED = 10
 
 def terminate():
     pygame.quit()
@@ -200,6 +201,34 @@ def play():
                 ball.update_pos()
                 surface.blit(ball.surface, ball.rect)
 
+                # Bumper Movement
+                if move_left and rs_bumper_top.rect.left > WINDOWWIDTH/2:
+                    rs_bumper_top.rect.move_ip(-1 * BUMPER_SPEED, 0)
+                    rs_bumper_bot.rect.move_ip(-1 * BUMPER_SPEED, 0)
+                if move_right and rs_bumper_top.rect.right < WINDOWWIDTH:
+                    rs_bumper_top.rect.move_ip(1 * BUMPER_SPEED, 0)
+                    rs_bumper_bot.rect.move_ip(1 * BUMPER_SPEED, 0)
+                if move_up  and rs_bumper_side.rect.top > 0:
+                    rs_bumper_side.rect.move_ip(0, -1 * BUMPER_SPEED)
+                if move_down and rs_bumper_side.rect.bottom < WINDOWHEIGHT :
+                    rs_bumper_side.rect.move_ip(1 * BUMPER_SPEED, 0)
+
+                # COM movement
+                ball_pos = ball.get_pos()
+                if (ball_pos[0] < ls_bumper_top.rect.left) and (ls_bumper_top.rect.left > 0):
+                    ls_bumper_top.rect.move_ip(-1 * BUMPER_SPEED, 0)
+                    ls_bumper_bot.rect.move_ip(-1 * BUMPER_SPEED, 0)
+                if (ball_pos[0] > ls_bumper_top.rect.right) and (ls_bumper_top.rect.right < WINDOWWIDTH/2):
+                    ls_bumper_top.rect.move_ip(1 * BUMPER_SPEED, 0)
+                    ls_bumper_bot.rect.move_ip(1 * BUMPER_SPEED, 0)
+                if (ball_pos[1] < ls_bumper_side.rect.top) and (ls_bumper_side.rect.top > 0):
+                    ls_bumper_side.rect.move_ip(0, -1 * BUMPER_SPEED)
+                if (ball_pos[1] > ls_bumper_side.rect.bottom) and (ls_bumper_side.rect.bottom < WINDOWHEIGHT):
+                    ls_bumper_side.rect.move_ip(0, 1 * BUMPER_SPEED)
+
+                # collisions
+
+
                 # Bumpers
                 surface.blit(ls_bumper_top.surface, ls_bumper_top.rect)
                 surface.blit(ls_bumper_bot.surface, ls_bumper_bot.rect)
@@ -209,18 +238,18 @@ def play():
                 surface.blit(rs_bumper_side.surface, rs_bumper_side.rect)
 
                 # check for ball position
-                ball_pos = ball.get_pos()
-
                 if ball_hit_objs( bumpers, ball):
                     print( 'bounce detected' )
 
                 if ball_exit_left(ball):
                     print('rs gain point')
                     gamestats.increment_player_score('PR')
+                    win_sound.play()
                     ball.reset()
                 elif ball_exit_right(ball):
                     print('ls gain point')
                     gamestats.increment_player_score('PL')
+                    lose_sound.play()
                     ball.reset()
 
                 pygame.display.update()
